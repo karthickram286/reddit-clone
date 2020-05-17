@@ -9,7 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @NoArgsConstructor
-@Data
+@RequiredArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity
 public class Comment extends Auditable {
 
@@ -21,5 +24,6 @@ public class Comment extends Auditable {
     private String body;
 
     @ManyToOne
+    @NonNull
     private Link link;
 }

@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Data
+@RequiredArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity
 public class Link extends Auditable {
 
@@ -25,6 +28,10 @@ public class Link extends Auditable {
     @NonNull
     private String url;
 
-    @OneToMany(mappedBy = "Link")
+    @OneToMany()
     private List<Comment> comments = new ArrayList<>();
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
 }
