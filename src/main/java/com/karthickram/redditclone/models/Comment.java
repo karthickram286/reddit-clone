@@ -3,27 +3,30 @@ package com.karthickram.redditclone.models;
 import com.karthickram.redditclone.audit.Auditable;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import java.time.Instant;
 
 @NoArgsConstructor
-@RequiredArgsConstructor
-@Getter
-@Setter
-@ToString
+@AllArgsConstructor
+@Data
 @Entity
 public class Comment extends Auditable {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long commentId;
 
-    @NonNull
-    private String body;
+    @NotEmpty
+    private String text;
 
-    @ManyToOne
-    @NonNull
-    private Link link;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId", referencedColumnName = "postId")
+    private Post post;
+
+    private Instant createdDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    private User user;
 }
