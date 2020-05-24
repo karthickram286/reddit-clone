@@ -1,6 +1,7 @@
 package com.karthickram.redditclone.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,8 +9,9 @@ import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Data
 @Table(name = "token")
+@Entity
 public class VerificationToken {
 
     @Id
