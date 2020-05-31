@@ -15,4 +15,9 @@ public class JWTProvider {
                 .setSubject(principal.getUsername())
                 .compact();
     }
+
+    public boolean validateToken(String jwt) {
+        Jwts.parser().parseClaimsJws(jwt);
+        return true;
+    }
 }
