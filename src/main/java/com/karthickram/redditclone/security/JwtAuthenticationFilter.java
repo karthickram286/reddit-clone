@@ -1,7 +1,12 @@
 package com.karthickram.redditclone.security;
 
 import com.karthickram.redditclone.service.JWTProvider;
+import com.karthickram.redditclone.util.JWTUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,22 +19,37 @@ import java.io.IOException;
 
 @Component
 @AllArgsConstructor
-public class JwtAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JWTProvider jwtProvider;
+    private final MyUserDetailsService myUserDetailsService;
+    private final JWTUtil jwtUtil;
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-//        String jwtFromRequest = getJwtFromRequest(httpServletRequest);
-//        jwtProvider.validateToken(jwtFromRequest);
-//    }
+    @Override
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-    private String getJwtFromRequest(HttpServletRequest httpServletRequest) {
-        String bearerToken = httpServletRequest.getHeader("Authorization");
+        String emailId = null;
+        String jwt = null;
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            jwt = authorizationHeader.substring(7);
+            emailId = jwtUtil.extractUsername(jwt);
         }
-        return bearerToken;
+
+        if (emailId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.myUserDetailsService.loadUserByUsername(emailId);
+
+            if (jwtUtil.validateToken(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
+                        UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource()
+                        .buildDetails(httpServletRequest));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+        }
+
+        // Passing the control to the next filter in the chain
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
