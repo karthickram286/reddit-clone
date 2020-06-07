@@ -9,11 +9,16 @@ import com.karthickram.redditclone.models.User;
 import com.karthickram.redditclone.models.VerificationToken;
 import com.karthickram.redditclone.repository.UserRepository;
 import com.karthickram.redditclone.repository.VerificationTokenRepository;
+import com.karthickram.redditclone.security.MyUserDetailsService;
+import com.karthickram.redditclone.util.JWTUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +29,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
@@ -32,6 +38,8 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
+    private final JWTUtil jwtUtil;
+    private final MyUserDetailsService myUserDetailsService;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -83,12 +91,18 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public AuthenticationResponse login(LoginRequest loginRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),
-                loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
+    public AuthenticationResponse login(LoginRequest loginRequest) throws Exception {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmailId(),
+                    loginRequest.getPassword()));
+            //        SecurityContextHolder.getContext().setAuthentication(authenticate);
 
-        String token = jwtProvider.generateToken(authenticate);
-        return new AuthenticationResponse(token, loginRequest.getUserName());
+            UserDetails userDetails = myUserDetailsService.loadUserByUsername(loginRequest.getEmailId());
+            String token = jwtUtil.generateToken(userDetails);
+            return new AuthenticationResponse(token, loginRequest.getEmailId());
+        } catch (BadCredentialsException e) {
+            log.error("Incorrect username or password " + loginRequest.getEmailId());
+            throw new Exception("Incorrect username or password");
+        }
     }
 }
