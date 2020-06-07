@@ -95,7 +95,7 @@ public class AuthService {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmailId(),
                     loginRequest.getPassword()));
-            //        SecurityContextHolder.getContext().setAuthentication(authenticate);
+//            SecurityContextHolder.getContext().setAuthentication(authenticate);
 
             UserDetails userDetails = myUserDetailsService.loadUserByUsername(loginRequest.getEmailId());
             String token = jwtUtil.generateToken(userDetails);
@@ -104,5 +104,13 @@ public class AuthService {
             log.error("Incorrect username or password " + loginRequest.getEmailId());
             throw new Exception("Incorrect username or password");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        return userRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> new RedditCloneException("EmailId not found - " + principal.getUsername()));
     }
 }

@@ -1,18 +1,18 @@
 package com.karthickram.redditclone.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class SubRedditDto {
+public class PostsDto {
 
-    private Long id;
-    private String name;
+    private Long postId;
+    private String subredditName;
+    private String user;
+    private String postName;
+    private String url;
     private String description;
-    private Integer numberOfPosts;
 }
