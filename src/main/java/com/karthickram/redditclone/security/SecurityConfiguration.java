@@ -56,6 +56,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()    // Permit all auth endpoints without authorizing
+                // Excluding swagger ui from authorization
+                .antMatchers("/v2/api-docs",
+                        "/swagger-resources/configuration/ui",
+                        "/swagger-resources",
+                        "/swagger-resources/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);// Setting stateless session policy since jwt is used

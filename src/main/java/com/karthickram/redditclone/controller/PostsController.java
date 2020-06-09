@@ -2,6 +2,7 @@ package com.karthickram.redditclone.controller;
 
 import com.karthickram.redditclone.dto.PostsDto;
 import com.karthickram.redditclone.service.PostService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ public class PostsController {
     private final PostService postService;
 
     @PostMapping
+    @ApiOperation(value = "Creates a new post",
+            response = PostsDto.class)
     public ResponseEntity createPost(@RequestBody PostsDto postsDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(postService.save(postsDto));
