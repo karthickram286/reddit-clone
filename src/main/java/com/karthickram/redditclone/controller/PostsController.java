@@ -25,27 +25,27 @@ public class PostsController {
                 .body(postService.save(postsDto));
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PostsDto> getPost(@PathVariable Long id) {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(postService.getPost(id));
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<PostsDto>> getAllPosts() {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(postService.getAllPosts());
-//    }
-//
-//    @GetMapping("/subreddit/{subredditId}")
-//    public ResponseEntity<List<PostsDto>> getPostsBySubreddit(@PathVariable Long subredditId) {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(postService.getPostsBySubredditId(subredditId));
-//    }
-//
-//    @GetMapping("/user/{emailId}")
-//    public ResponseEntity<List<PostsDto>> getPostsByEmailId(@PathVariable String emailId) {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(postService.getPostsByEmailId(emailId));
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<PostsDto> getPost(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postService.getPost(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostsDto>> getAllPosts() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postService.getAllPosts());
+    }
+
+    @GetMapping("/subreddit/{subredditId}")
+    public ResponseEntity<List<PostsDto>> getPostsBySubreddit(@PathVariable Long subredditId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postService.getPostsBySubredditId(subredditId));
+    }
+
+    @GetMapping("/user/{emailId}")
+    public ResponseEntity<List<PostsDto>> getPostsByEmailId(@PathVariable String emailId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postService.getPostsByEmailId(emailId));
+    }
 }
