@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 @Entity
 public class Comment extends Auditable {
