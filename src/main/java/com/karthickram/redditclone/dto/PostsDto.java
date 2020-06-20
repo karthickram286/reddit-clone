@@ -17,4 +17,5 @@ public class PostsDto {
     private String postName;
     private String url;
     private String description;
+    private Integer voteCount;
 }

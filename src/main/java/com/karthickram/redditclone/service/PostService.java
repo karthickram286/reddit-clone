@@ -70,6 +70,7 @@ public class PostService {
                 .description(post.getDescription())
                 .user(authService.getCurrentUser().getUserName())
                 .subredditName(post.getSubReddit().getName())
+                .voteCount(post.getVoteCount())
                 .build();
     }
 

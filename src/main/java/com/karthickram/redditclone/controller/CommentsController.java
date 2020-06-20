@@ -19,12 +19,18 @@ public class CommentsController {
     @PostMapping
     public ResponseEntity createComment(@RequestBody CommentsDto commentsDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(commentService.save(commentsDto));
+                .body(commentService.save(commentsDto));
     }
 
-    @GetMapping
+    @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@PathVariable Long postId) {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(commentService.getAllCommentsForPost(postId));
+                .body(commentService.getAllCommentsForPost(postId));
+    }
+
+    @GetMapping("/user/{emailId}")
+    public ResponseEntity<List<CommentsDto>> getAllCommentsForUser(@PathVariable String emailId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(commentService.getAllCommentsForUser(emailId));
     }
 }

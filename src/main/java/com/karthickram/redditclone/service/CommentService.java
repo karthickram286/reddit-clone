@@ -4,6 +4,7 @@ import com.karthickram.redditclone.dto.CommentsDto;
 import com.karthickram.redditclone.exception.RedditCloneException;
 import com.karthickram.redditclone.models.Comment;
 import com.karthickram.redditclone.models.Post;
+import com.karthickram.redditclone.models.User;
 import com.karthickram.redditclone.repository.CommentRepository;
 import com.karthickram.redditclone.repository.PostRepository;
 import com.karthickram.redditclone.repository.UserRepository;
@@ -67,5 +68,15 @@ public class CommentService {
                 .text(comment.getText())
                 .userName(comment.getUser().getUserName())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentsDto> getAllCommentsForUser(String emailId) {
+        User user = userRepository.findByEmail(emailId)
+                        .orElseThrow(() -> new RedditCloneException("User not found for emailId: " + emailId));
+        return commentRepository.findAllByUser(user)
+                .stream()
+                .map(this::mapToCommentsDto)
+                .collect(Collectors.toList());
     }
 }
